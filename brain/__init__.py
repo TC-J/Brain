@@ -27,7 +27,7 @@ class Data(ABC):
         uninstallation, and the retrieval of the training, and testing
         data to be used by the supervisor.
 
-        The installation and training-data retrieval-methods must be implemented; the
+        The `install` and `training_data` methods must be implemented; the
         rest of the functions are overridable - returning None for all but the
         uninstall method, which removes the data-dir, by default.
 
@@ -47,7 +47,7 @@ class Data(ABC):
         `is_installed` is overridable, it defaults to checking to see if the
         data-dir is empty.
 
-        `__preprocess__` is called after the install method in the constructor, only
+        `__preprocess__` is called after the install method in the supervisor, only
         if the data is not already installed; it does nothing and is overridable. Use
         it for eg extracting zip data and any mutations to the data before the dataset
         instance is used to fetch it.
@@ -75,7 +75,7 @@ class Data(ABC):
 
 
     @override
-    def __preprocess__(
+    def preprocess(
         self
     ):
         pass
@@ -297,6 +297,11 @@ class Supervisor:
                 self.hyperparameters
             )
         ) if isclass(self.loss) else self.loss
+
+        if not data.is_installed():
+            data.install()
+
+            data.preprocess()
 
         training_data = data.training_data()
 
