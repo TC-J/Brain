@@ -32,7 +32,7 @@ class Data(ABC):
         uninstall method, which removes the data-dir, by default.
 
         `install` installs the data on the host; if the data is in-memory just
-        pass/return in the method implementation, or create the data and save it to self for the dataset
+        pass/return in the method implementation, or create the data and save it to self for your dataset
         functions to fetch it.
 
         `training_data` creates the dataset instance.
@@ -433,3 +433,26 @@ class Supervisor:
                         epoch_test_losses.append(test_loss.item())
 
                         interval_test_loss = 0
+
+        brain.metrics["epoch_loss"] = epoch_losses
+
+        brain.metrics["interval_loss"] = interval_losses
+
+        brain.metrics["running_loss"] = running_losses
+
+        if has_test:
+            brain.metrics["epoch_test_loss"] = epoch_test_losses
+
+            brain.metrics["interval_test_loss"] = interval_test_losses
+
+            brain.metrics["running_test_loss"] = running_test_losses
+        
+        # FIXME: param-norm add to metrics
+        if brain.metrics.is_tracking("param_norm"):
+            pass
+
+        # FIXME: grad-norm add to metrics
+        if brain.metrics.is_tracking("grad_norm"):
+            pass
+
+        return brain
